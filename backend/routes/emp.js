@@ -4,6 +4,7 @@ const multer = require("multer");
 const path = require("path");
 const Employee = require("../models/emp");
 
+
 const uploadPath = path.join(__dirname, "../uploads/employees");
 
 const storage = multer.diskStorage({
@@ -29,7 +30,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-
 router.get("/:id", async (req, res) => {
   try {
     const emp = await Employee.findById(req.params.id);
@@ -40,15 +40,12 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
 router.post("/", upload.single("photo"), async (req, res) => {
   try {
     const data = req.body;
 
-    const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get("host")}`;
-
     if (req.file) {
-      data.photo = `${baseUrl}/uploads/employees/${req.file.filename}`;
+      data.photo = `${req.protocol}://${req.get("host")}/uploads/employees/${req.file.filename}`;
     }
 
     const newEmployee = new Employee(data);
@@ -56,25 +53,25 @@ router.post("/", upload.single("photo"), async (req, res) => {
 
     res.json(newEmployee);
   } catch (err) {
-    res.status(500).json({ message: "error creating employee", error: err.message });
+    res.status(500).json({ message: "error with creating employee", error: err.message });
   }
 });
 
 router.put("/:id", upload.single("photo"), async (req, res) => {
   try {
     const data = req.body;
-    const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get("host")}`;
 
     if (req.file) {
-      data.photo = `${baseUrl}/uploads/employees/${req.file.filename}`;
+      data.photo = `${req.protocol}://${req.get("host")}/uploads/employees/${req.file.filename}`;
     }
 
     const updated = await Employee.findByIdAndUpdate(req.params.id, data, { new: true });
+
     if (!updated) return res.status(404).json({ message: "employee not found" });
 
     res.json(updated);
   } catch (err) {
-    res.status(500).json({ message: "error updating employee", error: err.message });
+    res.status(500).json({ message: "error with updating employee", error: err.message });
   }
 });
 
@@ -83,9 +80,9 @@ router.delete("/:id", async (req, res) => {
     const deleted = await Employee.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: "Employee not found" });
 
-    res.json({ message: "employee deleted", id: req.params.id });
+    res.json({ message: "employee is now deleted", id: req.params.id });
   } catch (err) {
-    res.status(500).json({ message: "error deleting employee", error: err.message });
+    res.status(500).json({ message: "error with deleting employee", error: err.message });
   }
 });
 
