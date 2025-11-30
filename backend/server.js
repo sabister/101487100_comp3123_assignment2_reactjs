@@ -13,12 +13,18 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "https://101487100-comp3123-assignment2-reactjs-70o6og6ml.vercel.app",
+    origin: [
+      "https://101487100-comp3123-assignment2-reactjs-70o6og6ml.vercel.app",
+      "https://101487100-comp3123-assignment2-reactjs-q2kntvujj.vercel.app", 
+      /\.vercel\.app$/, 
+      "https://101487100-comp3123-assignment2-reac.vercel.app" 
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
   })
 );
+
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -34,7 +40,7 @@ mongoose
   })
   .then(() => {
     console.log("Connected to MongoDB");
-    app.listen(PORT, () => 
+    app.listen(PORT, () =>
       console.log(`Server running on port ${PORT}`)
     );
   })
