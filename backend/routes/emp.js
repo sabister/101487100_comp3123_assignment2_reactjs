@@ -5,11 +5,9 @@ const path = require("path");
 const Employee = require("../models/emp");
 
 
-const uploadPath = path.join(__dirname, "../uploads/employees");
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadPath);
+    cb(null, "uploads/employees");
   },
   filename: (req, file, cb) => {
     cb(
@@ -30,6 +28,37 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/search", async (req, res) => {
+  try {
+    const { q, department, position } = req.query;
+
+    const filter = {};
+
+    if (q) {
+      filter.$or = [
+        { first_name: { $regex: q, $options: "i" } },
+        { last_name: { $regex: q, $options: "i" } },
+        { email: { $regex: q, $options: "i" } }
+      ];
+    }
+
+    if (department) {
+      filter.department = { $regex: department, $options: "i" };
+    }
+
+    if (position) {
+      filter.position = { $regex: position, $options: "i" };
+    }
+
+    const employees = await Employee.find(filter);
+    res.json(employees);
+  } catch (err) {
+    console.error("SEARCH ERROR:", err);
+    res.status(500).json({ message: "search failed", error: err.message });
+  }
+});
+
+
 router.get("/:id", async (req, res) => {
   try {
     const emp = await Employee.findById(req.params.id);
@@ -45,7 +74,7 @@ router.post("/", upload.single("photo"), async (req, res) => {
     const data = req.body;
 
     if (req.file) {
-      data.photo = `${req.protocol}://${req.get("host")}/uploads/employees/${req.file.filename}`;
+      data.photo = "/uploads/employees/" + req.file.filename;
     }
 
     const newEmployee = new Employee(data);
@@ -62,7 +91,7 @@ router.put("/:id", upload.single("photo"), async (req, res) => {
     const data = req.body;
 
     if (req.file) {
-      data.photo = `${req.protocol}://${req.get("host")}/uploads/employees/${req.file.filename}`;
+      data.photo = "/uploads/employees/" + req.file.filename;
     }
 
     const updated = await Employee.findByIdAndUpdate(req.params.id, data, { new: true });
