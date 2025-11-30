@@ -1,4 +1,6 @@
-Backend - Render
-Frontend - Vercel
-link to render - https://dashboard.render.com/web/srv-d4m901vpm1nc73cp6s5g/deploys/dep-d4m99je3jp1c739peki0
-link to vercel - 
+1. Backend - Render
+2. Frontend - Vercel
+3. link to render - https://one01487100-comp3123-assignment2-reactjs.onrender.com/api
+4. other link to render https://one01487100-comp3123-assignment2-reactjs.onrender.com
+5. link to vercel - https://101487100-comp3123-assignment2-reac.vercel.app/signup
+6. note just click on the link to vercel for it to load the project not on render 
